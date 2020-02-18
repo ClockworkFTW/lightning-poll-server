@@ -33,15 +33,30 @@ pollRouter.post("/", async (req, res) => {
 pollRouter.patch("/:link", async (req, res) => {
 	try {
 		const { link } = req.params;
+		const { prev, curr } = req.body.votes;
+
 		const poll = await Poll.findOne({ link });
-		const votes = poll.votes.map((vote, i) =>
-			i === req.body.vote ? vote + 1 : vote
-		);
+
+		if (prev === curr) {
+			return res.json(poll);
+		}
+
+		const votes = poll.votes.map((vote, i) => {
+			if (i === curr) {
+				return vote + 1;
+			} else if (i === prev) {
+				return vote - 1;
+			} else {
+				return vote;
+			}
+		});
+
 		const updatedPoll = await Poll.findOneAndUpdate(
 			{ link },
 			{ votes },
 			{ new: true }
 		);
+
 		res.json(updatedPoll);
 	} catch (error) {
 		res.status(400).json({ message: "poll not updated" });

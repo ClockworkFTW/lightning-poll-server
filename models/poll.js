@@ -6,6 +6,7 @@ const pollSchema = new mongoose.Schema({
 	link: { type: String },
 	title: { type: String, required: true },
 	author: { type: String, default: "guest" },
+	created: { type: Date, default: new Date() },
 	options: {
 		type: [{ type: String }],
 		validate: [minOptions, "poll must have at least two options"]
