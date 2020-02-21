@@ -15,10 +15,11 @@ pollRouter.get("/", async (req, res) => {
 
 pollRouter.post("/", async (req, res) => {
 	try {
-		const { title, options } = req.body;
+		const { title, category, options } = req.body;
 		console.log(title, options);
 		const poll = new Poll({
 			title,
+			category,
 			options,
 			votes: new Array(options.length).fill(0)
 		});
@@ -33,23 +34,11 @@ pollRouter.post("/", async (req, res) => {
 pollRouter.patch("/:link", async (req, res) => {
 	try {
 		const { link } = req.params;
-		const { prev, curr } = req.body.votes;
+		const { vote } = req.body;
 
 		const poll = await Poll.findOne({ link });
 
-		if (prev === curr) {
-			return res.json(poll);
-		}
-
-		const votes = poll.votes.map((vote, i) => {
-			if (i === curr) {
-				return vote + 1;
-			} else if (i === prev) {
-				return vote - 1;
-			} else {
-				return vote;
-			}
-		});
+		const votes = poll.votes.map((e, i) => (i === vote ? e + 1 : e));
 
 		const updatedPoll = await Poll.findOneAndUpdate(
 			{ link },
