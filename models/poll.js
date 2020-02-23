@@ -13,6 +13,7 @@ const pollSchema = new mongoose.Schema({
 		type: [{ type: String }],
 		validate: [minOptions, "poll must have at least two options"]
 	},
+	settings: { type: Object },
 	votes: [{ type: Number }]
 });
 

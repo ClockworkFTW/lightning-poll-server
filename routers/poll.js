@@ -15,12 +15,12 @@ pollRouter.get("/", async (req, res) => {
 
 pollRouter.post("/", async (req, res) => {
 	try {
-		const { title, category, options } = req.body;
-		console.log(title, options);
+		const { title, category, options, settings } = req.body;
 		const poll = new Poll({
 			title,
 			category,
 			options,
+			settings,
 			votes: new Array(options.length).fill(0)
 		});
 		poll.link = uniqid();
