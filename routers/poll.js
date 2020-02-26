@@ -15,15 +15,9 @@ pollRouter.get("/", async (req, res) => {
 
 pollRouter.post("/", async (req, res) => {
 	try {
-		const { title, category, options, settings } = req.body;
-		const poll = new Poll({
-			title,
-			category,
-			options,
-			settings,
-			votes: new Array(options.length).fill(0)
-		});
+		const poll = new Poll(req.body);
 		poll.link = uniqid();
+		poll.created = new Date();
 		const newPoll = await poll.save();
 		res.json(newPoll);
 	} catch (error) {
@@ -34,19 +28,30 @@ pollRouter.post("/", async (req, res) => {
 pollRouter.patch("/:link", async (req, res) => {
 	try {
 		const { link } = req.params;
-		const { vote } = req.body;
-
 		const poll = await Poll.findOne({ link });
 
-		const votes = poll.votes.map((e, i) => (i === vote ? e + 1 : e));
+		if (!poll.settings.blockSameIp) {
+			let denied = false;
+			poll.votes.forEach(vote => {
+				if (vote.ip === req.body.ip) {
+					denied = true;
+				}
+			});
+			if (denied) {
+				return res
+					.status(400)
+					.json({ message: "only one vote per ip" });
+			}
+		}
 
+		const votes = [...poll.votes, req.body];
 		const updatedPoll = await Poll.findOneAndUpdate(
 			{ link },
 			{ votes },
 			{ new: true }
 		);
 
-		res.json(updatedPoll);
+		return res.json(updatedPoll);
 	} catch (error) {
 		res.status(400).json({ message: "poll not updated" });
 	}
