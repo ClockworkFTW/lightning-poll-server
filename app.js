@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // Mongoose connection
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost:27017/opinion-poll-dev", {
+mongoose.connect(process.env.DB_HOST_PROD, {
 	useNewUrlParser: "true",
 	useUnifiedTopology: true,
 	useFindAndModify: false
