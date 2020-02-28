@@ -28,6 +28,6 @@ mongoose.connection.on("connected", (err, res) =>
 
 // Routes
 const pollRouter = require("./routers/poll");
-app.use("/poll", pollRouter);
+app.use("/api/poll", pollRouter);
 
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}!`));
