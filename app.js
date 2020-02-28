@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 const cors = require("cors");
@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // Mongoose connection
 const mongoose = require("mongoose");
 
-mongoose.connect(process.env.DB_HOST_PROD, {
+mongoose.connect(process.env.DB_HOST, {
 	useNewUrlParser: "true",
 	useUnifiedTopology: true,
 	useFindAndModify: false
